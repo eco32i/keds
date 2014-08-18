@@ -1,0 +1,6 @@
+*.fastq.gz
+*.pileup
+*.log
+*.bt2
+*.[bs]am
+*.bai
