@@ -4,3 +4,5 @@
 *.bt2
 *.[bs]am
 *.bai
+*.pyc
+*.ipynb_checkpoints
