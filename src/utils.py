@@ -10,14 +10,14 @@ from itertools import izip
 def split_by_index(read1, read2, barcodes, bc_pos=(26,6)):
     '''
     Splits read pairs given in `read1` and `read2` according to the list of
-    barcodes given in `barcode`. 
+    barcodes given in `barcode`.
 
     The position and length of the barcode can be specified in `bc_pos` as a
     (start, length) tuple.
     '''
     output_files = {}
     # Read name line MUST start with @
-    fastq_tpl = '@{id}\n{seq}\n+\n{q}\n' 
+    fastq_tpl = '@{id}\n{seq}\n+\n{q}\n'
     cnt = 0
     assigned = 0
     for rec1, rec2 in izip(parse_fastq(read1), parse_fastq(read2)):
@@ -87,5 +87,22 @@ def split_pools(barcode, dirname='../data'):
                     cnt_plus += 1
             print "{0}\tplus records\t{1}\tminus records".format(cnt_plus, cnt_minus)
             sys.stdout.flush()
-            
 
+
+def parse_pileup(barcode, dirname='../results', track='minus', sample_id='minus'):
+    pileup = os.path.join(dirname, '{0}_{1}.pileup'.format(barcode, sample_id))
+    with open(pileup, 'rb') as _pileup:
+        reader = csv.DictReader(_pileup,
+                        delimiter='\t',
+                        fieldnames=['seqname', 'pos', 'base', 'coverage', 'details', 'qual'])
+        data = []
+        for rec in reader:
+            pos = int(rec['pos'])
+            last = rec
+            if pos == 1:
+                data.append({'pos': 0, 'base': '*',
+                             track: rec['details'].count('^')})
+            else:
+                data.append({'pos': pos-1, 'base': last['base'],
+                             track: rec['details'].count('^')})
+    return pd.DataFrame.from_records(data)
