@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import pandas as pd
-from itertools import izip
 
 
 def norm_factor28(theta):
@@ -33,7 +32,7 @@ def parse_sample(barcode, dirname='../data'):
         reader_plus = csv.DictReader(_plus, delimiter='\t', fieldnames=['seqname', 'pos', 'base', 'coverage', 'details', 'qual'])    
         reader_minus = csv.DictReader(_minus, delimiter='\t', fieldnames=['seqname', 'pos', 'base', 'coverage', 'details', 'qual'])    
         data = []
-        for rec1,rec2 in izip(reader_plus, reader_minus):
+        for rec1,rec2 in zip(reader_plus, reader_minus):
             pos = int(rec1['pos'])
             last = (rec1, rec2)
             if pos == 1:
